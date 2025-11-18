@@ -7,19 +7,21 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Enemy))]
 public class EnemyMover : MonoBehaviour
 {
-	[SerializeField] List<Waypoint> path = new List<Waypoint>();
+	// [SerializeField] List<Tile> path = new List<Tile>();
 
 	[Tooltip("Measured in Tiles per second.")]
 	[SerializeField][Range(0, 5)] float speed = 1;
 
 
 	Enemy enemy;
+	Pathfinder pathfinder;
+	GridManager gridManager;
 
 
 
 	void OnEnable()
 	{
-		FindPath();
+		// FindPath();	// Replaced by Pathfinder.cs.
 		ReturnToStart();
 		StartCoroutine(FollowPathRoutine());
 	}
@@ -28,29 +30,35 @@ public class EnemyMover : MonoBehaviour
 	void Awake()
 	{
 		enemy = GetComponent<Enemy>();	// Required.
+		
+		pathfinder = FindFirstObjectByType<Pathfinder>();
+		Assert.IsNotNull(pathfinder, "EnemyMover.Awake(): pathfinder not found in scene");
+
+		gridManager = FindObjectOfType<GridManager>();
+		Assert.IsNotNull(gridManager, "EnemyMover.Awake(): gridManager not found in scene.");
 	}
 
 
-	void FindPath()
-	{
-		path.Clear();
+	// void FindPath()
+	// {
+	// 	path.Clear();
 
-		GameObject pathFolder = GameObject.FindGameObjectWithTag("Path");
+	// 	GameObject pathFolder = GameObject.FindGameObjectWithTag("Path");
 
-		foreach (Transform child in pathFolder.transform)
-		{
-			Waypoint waypoint = child.GetComponent<Waypoint>();
+	// 	foreach (Transform child in pathFolder.transform)
+	// 	{
+	// 		Tile waypoint = child.GetComponent<Tile>();
 
-			if (waypoint != null)
-			{
-				path.Add(waypoint);
-			}
-			else
-			{
-				Debug.LogWarning("Found a tile that's not a Wayponint inside the Path!");
-			}
-		}
-	}
+	// 		if (waypoint != null)
+	// 		{
+	// 			path.Add(waypoint);
+	// 		}
+	// 		else
+	// 		{
+	// 			Debug.LogWarning("Found a tile that's not a Wayponint inside the Path!");
+	// 		}
+	// 	}
+	// }
 
 
 	void GoalReached()
@@ -62,10 +70,10 @@ public class EnemyMover : MonoBehaviour
 
 	IEnumerator FollowPathRoutine()
 	{
-		foreach (Waypoint waypoint in path)
+		foreach (Node node in pathfinder.Path)
 		{
 			Vector3 startPosition = this.transform.position;
-			Vector3 endPosition = waypoint.transform.position;
+			Vector3 endPosition = gridManager.GetPositionFromCoordinates(node.coordinates);
 			float travelPercent = 0;
 
 			transform.LookAt(endPosition);
@@ -84,11 +92,12 @@ public class EnemyMover : MonoBehaviour
 
 	void ReturnToStart()
 	{
-		if (path.Count == 0)
+		if (pathfinder.Path.Count == 0)
 		{
 			return;
 		}
 		
-		transform.position = path[0].transform.position;
+		// transform.position = path[0].transform.position;
+		transform.position = gridManager.GetPositionFromCoordinates(pathfinder.Path[0].coordinates);
 	}
 }

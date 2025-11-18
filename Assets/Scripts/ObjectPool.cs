@@ -20,7 +20,7 @@ public class ObjectPool : MonoBehaviour
 
 	void Start()
 	{
-		StartCoroutine(SpawnEnemyRoutine());
+		// StartCoroutine(SpawnEnemyRoutine());
 	}
 
 

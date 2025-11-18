@@ -924,7 +924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6202356873776576459, guid: 140c4bdbd00bfa0429ea479fd90a4881, type: 3}
       propertyPath: isPlaceable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 140c4bdbd00bfa0429ea479fd90a4881, type: 3}
@@ -4618,7 +4618,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49ba098e7eda5b046a46427e946bade1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: {x: 7, y: 3}
+  gridSize: {x: 8, y: 4}
+  unityGridSize: 10
 --- !u!4 &1059950350
 Transform:
   m_ObjectHideFlags: 0

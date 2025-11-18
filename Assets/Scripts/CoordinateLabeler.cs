@@ -25,13 +25,15 @@ public class CoordinateLabeler : MonoBehaviour
 
 	void Awake()
 	{
+		UnityEditor.EditorSnapSettings.move = new Vector3(10, 10, 10);
+
 		gridManager = FindObjectOfType<GridManager>();
 		Assert.IsNotNull(gridManager, "CoordinateLabel.Awake(): gridManager not found in the scene.");
 
 		label = GetComponent<TMP_Text>();
 		Assert.IsNotNull(label, "CoordinateLabel.Awake(): label not found in prefab.");
 
-		label.enabled = !Application.isPlaying;
+		// label.enabled = !Application.isPlaying;
 
 		DisplayCoordinates();    // Call only once at game start but update only in editor.
 	}
@@ -45,11 +47,11 @@ public class CoordinateLabeler : MonoBehaviour
 
 	void Update()
 	{
-		if (!Application.isPlaying)   // Execute only in Editor mode.
-		{
+		// if (!Application.isPlaying)   // Execute only in Editor mode.
+		// {
 			DisplayCoordinates();
 			UpdateName();
-		}
+		// }
 
 		SetLabelColor();
 		ToggleLabels();
@@ -58,8 +60,13 @@ public class CoordinateLabeler : MonoBehaviour
 
 	void DisplayCoordinates()
 	{
-		coordinates.x = Mathf.RoundToInt(transform.parent.position.x / UnityEditor.EditorSnapSettings.move.x);
-		coordinates.y = Mathf.RoundToInt(transform.parent.position.z / UnityEditor.EditorSnapSettings.move.z);
+		if (gridManager == null)
+		{
+			return;
+		}
+		
+		coordinates.x = Mathf.RoundToInt(transform.parent.position.x / gridManager.UnityGridSize);
+		coordinates.y = Mathf.RoundToInt(transform.parent.position.z / gridManager.UnityGridSize);
 		label.text = coordinates.ToString();
 	}
 
